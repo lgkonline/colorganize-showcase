@@ -1,0 +1,87 @@
+*:focus {
+    outline: none !important;
+}
+
+body {
+    font-family: "Rubik", sans-serif;
+    font-weight: 300;
+    cursor: default;
+}
+
+/*#appContent {
+    display: flex;
+    flex-direction: column;
+}*/
+
+#top {
+    min-height: 100vh;
+}
+
+header {
+    background-color: rgba(255,255,255,.8);
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+}
+
+header .container .row:not(:last-child) {
+    margin-bottom: 2rem;
+}
+
+main {
+    padding-bottom: 12rem;
+}
+
+footer {
+    background-color: black;
+    color: #95989A;
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+}
+
+footer .row > *:nth-child(2) {
+    text-align: center;
+}
+footer .row > *:last-child {
+    text-align: right;
+}
+
+footer a {
+    color: rgba(255, 255, 255, 0.7);
+}
+footer a:hover,
+footer a:focus {
+    color: white;
+}
+
+.color {
+    min-height: 90px;
+    border-radius: 4px;
+    margin-bottom: 4px;
+    padding: 10px 15px;
+    border: 1px solid RGBA(51,51,51,.1);
+}
+
+.color-label {
+    color: #fff;
+    text-shadow: 0px 1px 2px rgba(0,0,0,.8);
+}
+
+.row-2px {
+    margin-left: -2px;
+    margin-right: -2px;
+}
+
+.row-2px-col {
+    padding-left: 2px;
+    padding-right: 2px;
+}
+
+#lgkLogo {
+    text-decoration: none;
+    font-size: 2em;
+    color: #db5344;
+    transition: color .5s;
+}
+#lgkLogo:focus, #lgkLogo:hover {
+    color: #e37a6f;
+}
