@@ -1,20 +1,24 @@
 import React from "react";
 import {render} from "react-dom";
+import {Ribbon, RibbonGroup, RibbonGroupItem, RibbonButton} from "react-bootstrap-ribbon";
 import Superagent from "superagent";
 
 // require("bootstrap/dist/css/bootstrap.css");
 
 import "./bootstrap/css/bootstrap.css";
 import "./main.css";
+import "react-bootstrap-ribbon/dist/react-bootstrap-ribbon.css";
 
 class App extends React.Component {
     constructor() {
         super();
 
         this.state = {
-            paletteId: location.hash && location.hash.indexOf("#") > -1 ? location.hash.replace("#", "") : "default",
+            paletteId: (location.hash && location.hash.indexOf("#") > -1) ? location.hash.replace("#", "") : 
+                ((localStorage.getItem("paletteId") && localStorage.getItem("paletteId") != "") ? localStorage.getItem("paletteId") : "default"),
             palette: null,
-            renderedColorOptions: null
+            renderedColorOptions: null,
+            editSectionOut: false
         };
 
         this.options = [
@@ -35,7 +39,7 @@ class App extends React.Component {
         // ];
 
         this.options.map((option) => {
-            this.state[option] = "";
+            this.state[option] = localStorage.getItem(option) && localStorage.getItem(option) != "" ? localStorage.getItem(option) : "";
         });
 
         this.state.currentOption = this.options[0];
@@ -84,30 +88,80 @@ class App extends React.Component {
 
     chooseColor(color) {
         this.setState({[this.state.currentOption]: color.code});
+        localStorage.setItem(this.state.currentOption, color.code);
     }
 
     choosePaletteId(event) {
         this.setState({paletteId: event.target.value});
+        localStorage.setItem("paletteId", event.target.value);
+    }
+
+    resetSettings() {
+        for (const prop in this.state) {
+            if (localStorage.getItem(prop)) {
+                localStorage.removeItem(prop);
+            }
+        }
+        location.reload();
+    }
+
+    useDefaultPalette() {
+        localStorage.setItem("paletteId", "default");
+        this.setState({paletteId: "default"}, this.receivePalette);
     }
 
     render() {
         return (
             <div id="appContent">
                 <div id="top" style={{backgroundColor: this.state.backgroundColor}}>
-                    <header>
+                    <section id="edit-section" className={this.state.editSectionOut ? "out" : ""}>
                         <div className="container">
-                            <div className="row">
-                                <div className="col-md-4 col-md-offset-8">
-                                    <form className="input-group" onSubmit={(event) => { event.preventDefault(); this.receivePalette();}}>
-                                        <input type="text" className="form-control" value={this.state.paletteId} onChange={(event) => this.choosePaletteId(event)}/>
-                                        <span className="input-group-btn">
-                                            <button type="submit" className="btn btn-primary">
-                                                <span className="icon-checkmark"/>
-                                            </button>
-                                        </span>
-                                    </form>
-                                </div>
-                            </div>
+                            <Ribbon>
+                                <RibbonGroup title="Settings" colClass="col-xs-6">
+                                    <RibbonGroupItem colClass="col-xs-12">
+                                        <RibbonButton onClick={() => this.resetSettings()}>
+                                            <div className="ribbon-icon">
+                                                <span className="icon-undo2"/>
+                                            </div>
+                                            <div>Reset settings</div>
+                                        </RibbonButton>
+                                    </RibbonGroupItem>
+                                </RibbonGroup>
+
+                                <RibbonGroup title="Color palette" colClass="col-xs-6">
+                                    <RibbonGroupItem colClass="col-xs-8">
+                                        <div className="row row-2px">
+                                            <RibbonGroupItem colClass="col-xs-12">
+                                                <form className="input-group" onSubmit={(event) => { event.preventDefault(); this.receivePalette();}}>
+                                                    <input type="text" className="form-control" 
+                                                        title="Insert a palette ID"
+                                                        placeholder="Insert a palette ID"
+                                                        value={this.state.paletteId} onChange={(event) => this.choosePaletteId(event)}/>
+                                                    <span className="input-group-btn">
+                                                        <button type="submit" className="btn btn-primary">
+                                                            <span className="icon-checkmark"/> Submit
+                                                        </button>
+                                                    </span>
+                                                </form>
+                                            </RibbonGroupItem>
+
+                                            <RibbonGroupItem colClass="col-xs-12">
+                                                <RibbonButton onClick={() => this.useDefaultPalette() }>
+                                                    <span className="icon-pencil3"/> Use default palette
+                                                </RibbonButton>
+                                            </RibbonGroupItem>
+                                        </div>
+                                    </RibbonGroupItem>
+
+                                    <RibbonGroupItem colClass="col-xs-4">
+                                        <a href={"https://colorganize.com/?palette=" + this.state.paletteId} target="_blank" 
+                                            className="btn btn-default btn-block">
+                                            <img src="https://colorganize.com/images/favicon.png" className="ribbon-icon"/>
+                                            <div>Open in Colorganize</div>
+                                        </a>
+                                    </RibbonGroupItem>
+                                </RibbonGroup>
+                            </Ribbon>
 
                             <div className="row">
                                 <div className="col-md-4">
@@ -138,7 +192,15 @@ class App extends React.Component {
 
                             </div>
                         </div>
-                    </header>
+                    </section>
+
+                    <div className="container">
+                        <button type="button" className={"btn btn-default " + this.state.editSectionOut ? "" : "btn-block"} onClick={() => {
+                            this.setState({editSectionOut: !this.state.editSectionOut});
+                        }}>
+                            <span className="icon-arrow-up2"/>
+                        </button>
+                    </div>
 
                     <main style={{color: this.state.textColor}}>
                         <div className="container">

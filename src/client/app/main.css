@@ -17,14 +17,22 @@ body {
     min-height: 100vh;
 }
 
-header {
+#edit-section {
     background-color: rgba(255,255,255,.8);
     padding-top: 2rem;
     padding-bottom: 2rem;
+    position: relative;
 }
 
-header .container .row:not(:last-child) {
+#edit-section .container .row:not(:last-child) {
     margin-bottom: 2rem;
+}
+
+#edit-section.out {
+    /*transform: translateY(-100%);*/
+    margin-top: -100%;
+    float: left;
+    /*visibility: hidden;*/
 }
 
 main {
